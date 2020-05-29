@@ -17,7 +17,7 @@ string generationalFuzz(int row, int col) {
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     vector<vector<Token>> res;
-    //200 byte for board + 5 byte direction + 2 byte for their length
+    //160 byte for board + 5 byte direction + 2 byte for their length
     if (Size < 165 + 2 * sizeof(uint8_t)) {
         return 0;
     }
