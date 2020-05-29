@@ -7,8 +7,7 @@
 #include <string.h>
 using namespace std;
 
-class Token {
-    public:
+struct Token {
     string player;
     string height;
     Token() = default;
