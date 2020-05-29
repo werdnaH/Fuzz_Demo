@@ -3,6 +3,8 @@
 #include <sstream>
 #include <vector>
 #include <map>
+#include <signal.h>
+#include <string.h>
 using namespace std;
 
 class Token {
@@ -38,7 +40,7 @@ vector<vector<Token>> readInput(string input) {
         vector<Token> row;
         stringstream ss_inner(tokens);
         string token;
-        cout << tokens << endl;
+        //cout << tokens << endl;
         while (getline(ss_inner, token, ',')) {
             row.push_back(Token(
                 token.substr(0, token.find('_')), 
@@ -61,20 +63,22 @@ map<string, int> score(vector<vector<Token>> board, string direct) {
     int dy = 0;
     if (direct == "N") {
         dx = 1;
-    } else if (direct == "S") {
+    } else if (strcmp(direct.c_str(), "S") == 0) {
         dx = -1;
-    } else if (direct == "E") {
+    } else if (strcmp(direct.c_str(), "E") == 0) {
         dy = 1;
-    } else {    
-        dy = -1;
+    } else if (strcmp(direct.c_str(), "BAD") == 0) { 
+        raise(SIGSEGV); // this is a pretend bug
+    } else {
+         dy = -1;
     }
-
+    
     for (int i = 0; i < board.size(); i++) {
         for (int j = 0; j < board[0].size(); j++) {
             string name = board[i][j].player;
-            cout << i << j << name << board[i][j].height << "============" << endl;
+            //cout << i << j << name << board[i][j].height << "============" << endl;
             if (name != " " && !isBlocked(board, i, j ,dx, dy, order))  {
-                cout << "score" << i << j << endl;
+                //cout << "score" << i << j << endl;
                 if (!record.count(name)) {
                     record[name] = 0;
                 }
@@ -97,7 +101,7 @@ bool isBlocked(vector<vector<Token>> board, int i, int j, int dx, int dy, map<st
     for (int h = 1; h <= 3; h++) {
         i += dx;
         j += dy;
-        cout << i << j << "|" << board[i][j].height << "|" << h << endl;
+        //cout << i << j << "|" << board[i][j].height << "|" << h << endl;
         if (i < 0 || i >= board.size() || j < 0 || j >= board[0].size()) {
             return false;
         }
