@@ -27,10 +27,6 @@ map<string, int> score(vector<vector<Token>> board, string direct);
 bool isBlocked(vector<vector<Token>> board, int i, int j, int dx, int dy, map<string, int>);
 
 
-
-
-
-
 vector<vector<Token>> readInput(string input) {
     vector<vector<Token>> ret;
     stringstream ss(input);
@@ -114,4 +110,18 @@ bool isBlocked(vector<vector<Token>> board, int i, int j, int dx, int dy, map<st
         }
     }
     return false;
+}
+
+void nextRange(const uint8_t **ptr, const const uint8_t *min, const const uint8_t *max, size_t len) {
+    *ptr += len;
+    if (ptr > max) {
+        ptr = min;
+    }
+}
+
+uint8_t getLength(const uint8_t *Data, int min, int max) {
+    uint8_t length_str;
+    memcpy(&length_str, Data, sizeof(length_str));
+    length_str %= max - min; // make length_str go between 1 and 5
+    length_str += min;
 }
