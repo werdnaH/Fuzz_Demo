@@ -10,7 +10,10 @@ using namespace std;
 struct Token {
     string player;
     string height;
-    Token() = default;
+    Token() {
+        player = " ";
+        height = " ";
+    }
     Token(string p, string h) {
         player = p;
         height = h;
@@ -26,6 +29,8 @@ map<string, int> score(vector<vector<Token>> board, string direct);
 
 bool isBlocked(vector<vector<Token>> board, int i, int j, int dx, int dy, map<string, int>);
 
+template<typename T>
+void nextRange(T* destination, const uint8_t **ptr, const uint8_t *min, const uint8_t *max, size_t len);
 
 vector<vector<Token>> readInput(string input) {
     vector<vector<Token>> ret;
@@ -112,16 +117,25 @@ bool isBlocked(vector<vector<Token>> board, int i, int j, int dx, int dy, map<st
     return false;
 }
 
-void nextRange(const uint8_t **ptr, const const uint8_t *min, const const uint8_t *max, size_t len) {
-    *ptr += len;
-    if (ptr > max) {
-        ptr = min;
+template<typename T>
+void nextRange(T* destination, const uint8_t **ptr, size_t* size, size_t len) {
+    if (len > *size) {
+        memset(destination, 0, len);
+        memcpy(destination, *ptr, *size);
+        *size = 0;
+        *ptr += *size;
+        return;
     }
-}
+    memcpy(destination, *ptr, len);
+    *size -= len;            
+    *ptr += len;
 
-uint8_t getLength(const uint8_t *Data, int min, int max) {
-    uint8_t length_str;
-    memcpy(&length_str, Data, sizeof(length_str));
+} // */
+
+
+
+uint8_t setRange(uint8_t length_str, int min, int max) {
     length_str %= max - min; // make length_str go between 1 and 5
-    length_str += min;
+    length_str += min; 
+    return length_str;
 }
