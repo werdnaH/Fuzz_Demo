@@ -10,38 +10,30 @@
 using namespace std;
 
 
-string generationalFuzz(int row, int col);
-string generationalFuzz(int row, int col) {
-    
-}
-
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-    vector<vector<Token>> res;
-    //160 byte for board + 5 byte direction + 2 byte for their length
-    if (Size < 165 + 2 * sizeof(uint8_t)) {
+    if (Size < 1) {
         return 0;
     }
+
+    FuzzReader fr(&Data, Size);
+
+    vector<vector<Token>> res;
+
     //uint8_t length_str = Data[0];
-    uint8_t direct_len;
-    memcpy(&direct_len, Data, sizeof(direct_len));
-    direct_len %= 4; // make direct_len go between 1 and 5
-    direct_len++;
-    Data += sizeof(uint8_t);
+    uint8_t length_str;
+    memcpy(&length_str, Data, sizeof(length_str));
+    // fr.NextBlock(&length_str, sizeof(length_str));
+    length_str = setRange(length_str, 1, 5);
 
-    string direction(reinterpret_cast<const char*>(Data), direct_len);
-    //printf("direction %s\n", direction.c_str());
-    Data += direct_len;
-
+    string direction;
+    fr.NextStr(&direction, length_str);
 
     uint8_t board_len;
-    memcpy(&board_len, Data, sizeof(board_len));
-    board_len %= 160; // generate maximum around 9*9
-    board_len++;
-    Data += sizeof(uint8_t);
+    fr.NextBlock(&board_len, sizeof(uint8_t));
 
-    string board(reinterpret_cast<const char*>(Data), board_len);
-    Data += board_len;
+    string board;
+    fr.NextStr(&board, board_len);
 
     res = readInput(board);
     

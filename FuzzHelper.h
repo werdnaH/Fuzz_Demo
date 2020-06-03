@@ -6,8 +6,8 @@ void nextRange(T* destination, const uint8_t **ptr, size_t* size, size_t len) {
     if (len > *size) {
         memset(destination, 0, len);
         memcpy(destination, *ptr, *size);
-        *size = 0;
         *ptr += *size;
+        *size = 0;
         return;
     }
     memcpy(destination, *ptr, len);
@@ -37,29 +37,32 @@ void GetStr(string* destination, const uint8_t** source, size_t* size, size_t le
     *size -= len;
 }
 
-struct FuzzReader {
+class FuzzReader {
+    private:
     const uint8_t** pData;
     size_t size;
+    public:
     FuzzReader() = default;
     FuzzReader(const uint8_t** d, size_t s) {
         pData = d;
         size = s;
     }
     template<typename T>
-    void nextBlock(T* destination, size_t len) {
-        if (len > *size) {
+    void NextBlock(T* destination, size_t len) {
+        printf("%lu, %lu\n",size, len);
+        if (len > size) {
             memset(destination, 0, len);
-            memcpy(destination, *pData, *size);
-            *size = 0;
-            *pData += *size;
+            memcpy(destination, *pData, size);
+            *pData += size;
+            size = 0;
             return;
         }
         memcpy(destination, *pData, len);
-        *size -= len;            
+        size -= len;            
         *pData += len;
     }
 
-    void nextStr(string* destination, size_t len) {
+    void NextStr(string* destination, size_t len) {
         if (size < len) {
             string direction(reinterpret_cast<const char*>(*pData), size);
             direction.append(string(len - size, ' '));
@@ -68,6 +71,10 @@ struct FuzzReader {
             size = 0;
             return;
         }
+        string tmp(reinterpret_cast<const char*>(*pData), len);
+        *destination = tmp;
+        *pData += len;
+        size -= len;
     }
 
 };
