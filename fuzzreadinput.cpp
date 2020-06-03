@@ -5,6 +5,7 @@
 #include <map>
 
 #include "tree.h"
+#include "FuzzHelper.h"
 
 using namespace std;
 

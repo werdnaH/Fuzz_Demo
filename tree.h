@@ -116,26 +116,3 @@ bool isBlocked(vector<vector<Token>> board, int i, int j, int dx, int dy, map<st
     }
     return false;
 }
-
-template<typename T>
-void nextRange(T* destination, const uint8_t **ptr, size_t* size, size_t len) {
-    if (len > *size) {
-        memset(destination, 0, len);
-        memcpy(destination, *ptr, *size);
-        *size = 0;
-        *ptr += *size;
-        return;
-    }
-    memcpy(destination, *ptr, len);
-    *size -= len;            
-    *ptr += len;
-
-} // */
-
-
-
-uint8_t setRange(uint8_t length_str, int min, int max) {
-    length_str %= max - min; // make length_str go between 1 and 5
-    length_str += min; 
-    return length_str;
-}
